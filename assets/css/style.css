@@ -1,0 +1,192 @@
+/* Reloading Podcast — site stylesheet
+   Palette: blue/gold primary (from the show's own logo), red/green as accents
+   (nod to Lee/Dillon/Redding/RCBS without literally reproducing their marks).
+   Structural conventions (cards, pill nav, eyebrow labels, dark theme) borrowed
+   from umbra-noesis.com's structure, NOT its color scheme. */
+
+:root {
+  --bg: #0b0d10;
+  --bg-elevated: #14171c;
+  --border: #262b33;
+
+  --blue: #1791c7;        /* brightened from the sampled #00709A for on-screen contrast */
+  --blue-chrome-1: #bfe9ff;
+  --blue-chrome-2: #2fa8de;
+  --blue-chrome-3: #0c4a68;
+  --gold: #d4af52;        /* brightened from sampled #BE9A3A */
+
+  --red-accent: #b72b29;  /* Lee */
+  --green-accent: #04703a;/* Redding/RCBS */
+
+  --text: #eef1f4;
+  --text-dim: #9aa4b2;
+
+  --radius: 10px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background:
+    linear-gradient(180deg, rgba(6,7,9,0.88) 0%, rgba(6,7,9,0.94) 60%, var(--bg) 100%),
+    url("../img/bg-brass-1.jpg") center top / cover no-repeat fixed;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  line-height: 1.5;
+}
+
+a { color: var(--blue-chrome-2); text-decoration: none; }
+a:hover { color: var(--gold); }
+
+.eyebrow {
+  display: inline-block;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+/* Chrome-blue heading treatment */
+h1, h2, h3, .chrome-text {
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  background: linear-gradient(180deg, #ffffff 0%, var(--blue-chrome-1) 28%, var(--blue-chrome-2) 55%, var(--blue-chrome-3) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.35);
+}
+
+header.site-header {
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-elevated);
+}
+
+.site-header-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.site-header img.logo {
+  height: 56px;
+  width: auto;
+  display: block;
+  border-radius: 6px;
+}
+
+nav.pill-nav {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+nav.pill-nav a {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+nav.pill-nav a:hover,
+nav.pill-nav a.active {
+  border-color: var(--blue);
+  color: var(--blue-chrome-2);
+}
+
+.hero {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 3.5rem 1.25rem 2.5rem;
+}
+
+.hero h1 {
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  margin: 0 0 0.75rem;
+}
+
+.hero p.lede {
+  color: var(--text-dim);
+  max-width: 640px;
+  font-size: 1.05rem;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.65rem 1.3rem;
+  border-radius: var(--radius);
+  font-weight: 700;
+  font-size: 0.9rem;
+  border: 1px solid transparent;
+}
+
+.btn-primary {
+  background: var(--blue);
+  color: #fff;
+}
+.btn-primary:hover { background: var(--blue-chrome-2); color: #fff; }
+
+.btn-accent-red {
+  background: var(--red-accent);
+  color: #fff;
+}
+.btn-accent-green {
+  background: var(--green-accent);
+  color: #fff;
+}
+
+section {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.1rem;
+}
+
+.card h3 { font-size: 1.05rem; margin: 0 0 0.4rem; }
+.card p { color: var(--text-dim); font-size: 0.9rem; margin: 0; }
+
+.card.accent-red { border-top: 3px solid var(--red-accent); }
+.card.accent-green { border-top: 3px solid var(--green-accent); }
+
+.host-card {
+  text-align: center;
+}
+.host-card img {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--blue);
+  margin-bottom: 0.6rem;
+  background: var(--border);
+}
+
+footer.site-footer {
+  border-top: 1px solid var(--border);
+  padding: 2rem 1.25rem;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
