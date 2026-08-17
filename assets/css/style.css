@@ -64,7 +64,7 @@ h1, h2, h3, .chrome-text {
 header.site-header {
   border-bottom: 1px solid var(--border);
   background:
-    linear-gradient(180deg, rgba(6,7,9,0.8) 0%, rgba(6,7,9,0.9) 100%),
+    linear-gradient(180deg, rgba(6,7,9,0.25) 0%, rgba(6,7,9,0.35) 100%),
     url("../img/bg-header-bench.png") center 35% / cover no-repeat;
 }
 
