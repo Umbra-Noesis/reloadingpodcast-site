@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episodes — Reloading Podcast</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <a href="index.html"><img class="logo" src="assets/img/rp-logo-banner.png" alt="Reloading Podcast"></a>
+    <nav class="pill-nav">
+      <a href="index.html">Home</a>
+      <a href="episodes.html" class="active">Episodes</a>
+      <a href="hosts.html">Hosts</a>
+      <a href="index.html#support">Support</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <span class="eyebrow">The Full Archive</span>
+  <h1 class="chrome-text">Episodes</h1>
+  <p class="lede">Every episode, straight from the show&rsquo;s own feed.</p>
+</section>
+
+<section id="episode-list">
+  <div class="card-grid" id="episodes-grid" style="grid-template-columns: 1fr;">
+    <div class="card"><h3>Loading episodes&hellip;</h3><p>Pulling the full list from the show feed.</p></div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  &copy; 2026 Reloading Podcast. Part of the Firearms Radio Network.
+</footer>
+
+<script>
+(function () {
+  var grid = document.getElementById('episodes-grid');
+  fetch('/api/episodes?limit=50')
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      var eps = (data.episodes || []);
+      if (!eps.length) {
+        grid.innerHTML = '<div class="card"><h3>Episodes unavailable</h3><p>Couldn&rsquo;t reach the show feed right now &mdash; try again shortly.</p></div>';
+        return;
+      }
+      grid.innerHTML = eps.map(function (ep) {
+        var date = ep.pubDate ? new Date(ep.pubDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : '';
+        var audio = ep.audio ? '<audio controls preload="none" style="width:100%;margin-top:0.6rem;" src="' + ep.audio + '"></audio>' : '';
+        return '<div class="card episode-card">' +
+          '<h3><a href="' + ep.link + '" target="_blank" rel="noopener">' + ep.title + '</a></h3>' +
+          '<p class="episode-date">' + date + '</p>' +
+          '<p>' + ep.excerpt + '</p>' +
+          audio +
+          '</div>';
+      }).join('');
+    })
+    .catch(function () {
+      grid.innerHTML = '<div class="card"><h3>Episodes unavailable</h3><p>Couldn&rsquo;t reach the show feed right now &mdash; try again shortly.</p></div>';
+    });
+})();
+</script>
+
+</body>
+</html>

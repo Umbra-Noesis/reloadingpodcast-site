@@ -31,12 +31,36 @@
 <section id="episodes">
   <span class="eyebrow">Latest</span>
   <h2 class="chrome-text">Recent Episodes</h2>
-  <div class="card-grid">
-    <div class="card"><h3>Episode placeholder</h3><p>Episode list wires in once the feed's connected.</p></div>
-    <div class="card"><h3>Episode placeholder</h3><p>Episode list wires in once the feed's connected.</p></div>
-    <div class="card"><h3>Episode placeholder</h3><p>Episode list wires in once the feed's connected.</p></div>
+  <div class="card-grid" id="recent-episodes">
+    <div class="card"><h3>Loading episodes&hellip;</h3><p>Pulling the latest from the show feed.</p></div>
   </div>
+  <p style="margin-top:1rem;"><a href="episodes.html" class="btn btn-primary">Browse All Episodes</a></p>
 </section>
+
+<script>
+(function () {
+  var grid = document.getElementById('recent-episodes');
+  fetch('/api/episodes?limit=3')
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      var eps = (data.episodes || []);
+      if (!eps.length) {
+        grid.innerHTML = '<div class="card"><h3>Episodes unavailable</h3><p>Couldn&rsquo;t reach the show feed right now &mdash; try again shortly.</p></div>';
+        return;
+      }
+      grid.innerHTML = eps.map(function (ep) {
+        var date = ep.pubDate ? new Date(ep.pubDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : '';
+        return '<div class="card">' +
+          '<h3><a href="' + ep.link + '" target="_blank" rel="noopener">' + ep.title + '</a></h3>' +
+          '<p>' + date + '</p>' +
+          '</div>';
+      }).join('');
+    })
+    .catch(function () {
+      grid.innerHTML = '<div class="card"><h3>Episodes unavailable</h3><p>Couldn&rsquo;t reach the show feed right now &mdash; try again shortly.</p></div>';
+    });
+})();
+</script>
 
 <section id="hosts">
   <span class="eyebrow">Who's Behind the Mic</span>
