@@ -121,6 +121,64 @@ nav.pill-nav a.active {
   font-size: 1.05rem;
 }
 
+/* Hero + sidebar layout, matching FRN's own episode-page share/support widget */
+.hero-with-sidebar {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.hero-with-sidebar .hero-main { flex: 1 1 420px; }
+
+.side-widget {
+  flex: 0 0 280px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+.side-widget h3 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  margin: 0 0 0.6rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+  background: none;
+  -webkit-text-fill-color: currentColor;
+}
+.side-widget h3:not(:first-child) { margin-top: 1.25rem; }
+
+.share-icons { display: flex; gap: 0.5rem; }
+.share-icons .share-icon {
+  flex: 1;
+  text-align: center;
+  padding: 0.6rem 0;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+.share-icons .share-icon:hover { border-color: var(--blue); color: var(--blue-chrome-2); }
+
+.btn-block { display: block; text-align: center; }
+
+.widget-links {
+  margin-top: 0.9rem;
+  font-size: 0.85rem;
+  line-height: 1.8;
+  color: var(--text-dim);
+}
+.widget-links a { color: var(--gold); }
+.widget-links a:hover { color: var(--blue-chrome-2); }
+
+@media (max-width: 700px) {
+  .side-widget { flex-basis: 100%; }
+}
+
 .btn {
   display: inline-block;
   padding: 0.65rem 1.3rem;
