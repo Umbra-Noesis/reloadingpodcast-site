@@ -170,6 +170,22 @@ section {
 .card.accent-red { border-top: 3px solid var(--red-accent); }
 .card.accent-green { border-top: 3px solid var(--green-accent); }
 
+/* Crisis resources gets its own full-width band, deliberately set apart
+   from the surrounding sections rather than folded into show notes. */
+.crisis-resources {
+  max-width: none;
+  padding: 0;
+  background: rgba(183, 43, 41, 0.08);
+  border-top: 1px solid var(--red-accent);
+  border-bottom: 1px solid var(--red-accent);
+}
+.crisis-resources .section-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem;
+}
+.crisis-resources .card.accent-red p a { color: var(--blue-chrome-2); }
+
 .host-card {
   text-align: center;
 }
