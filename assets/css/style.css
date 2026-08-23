@@ -252,14 +252,16 @@ section {
   border-radius: 0;
 }
 
-/* Crisis resources gets its own full-width band, deliberately set apart
-   from the surrounding sections rather than folded into show notes. */
+/* Crisis resources gets its own boxed-in region, deliberately set apart
+   from the surrounding sections rather than folded into show notes —
+   but aligned to the same content width as everything else, not full-bleed. */
 .crisis-resources {
-  max-width: none;
+  max-width: 1180px;
+  margin: 0 auto;
   padding: 0;
   background: rgba(183, 43, 41, 0.08);
-  border-top: 1px solid var(--red-accent);
-  border-bottom: 1px solid var(--red-accent);
+  border: 1px solid var(--red-accent);
+  border-radius: var(--radius);
 }
 .crisis-resources .section-inner {
   max-width: 1180px;
@@ -267,6 +269,49 @@ section {
   padding: 2.5rem 1.25rem;
 }
 .crisis-resources .card.accent-red p a { color: var(--blue-chrome-2); }
+
+/* Slow, calm auto-scroll of the crisis-resources cards — motion reserved
+   for this one section so it stays meaningful. Pauses on hover and on
+   keyboard focus so nobody's chasing a moving phone-number link, and
+   backs off entirely for anyone who's asked their OS for reduced motion. */
+.crisis-scroll {
+  overflow: hidden;
+  margin-top: 1rem;
+}
+.crisis-scroll-track {
+  display: flex;
+  gap: 1rem;
+  width: max-content;
+  animation: crisis-scroll 70s linear infinite;
+}
+.crisis-scroll-track .card {
+  flex: 0 0 280px;
+}
+.crisis-scroll-track:hover,
+.crisis-scroll-track:focus-within {
+  animation-play-state: paused;
+}
+@keyframes crisis-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .crisis-scroll-track { animation: none; }
+}
+
+/* Disclaimer box — hero, static, soft red outline (same "pay attention"
+   language as crisis-resources, but no motion; this one's meant to be
+   read in full, not caught out of the corner of an eye). */
+.disclaimer-box {
+  border: 1px solid rgba(183, 43, 41, 0.45);
+  background: rgba(183, 43, 41, 0.06);
+  border-radius: var(--radius);
+  padding: 0.9rem 1.1rem;
+  margin: 1rem 0;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+.disclaimer-box strong { color: var(--text); }
 
 .host-card {
   text-align: center;
