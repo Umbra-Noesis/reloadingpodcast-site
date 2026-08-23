@@ -29,7 +29,7 @@
 body {
   margin: 0;
   background:
-    linear-gradient(180deg, rgba(6,7,9,0.88) 0%, rgba(6,7,9,0.94) 60%, var(--bg) 100%),
+    linear-gradient(180deg, rgba(6,7,9,0.80) 0%, rgba(6,7,9,0.88) 60%, var(--bg) 100%),
     url("../img/bg-brass-1.jpg") center top / cover no-repeat fixed;
   background-color: var(--bg);
   color: var(--text);
