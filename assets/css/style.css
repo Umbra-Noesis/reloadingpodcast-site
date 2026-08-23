@@ -232,8 +232,10 @@ section {
 .card.accent-gold { border-top: 3px solid var(--gold); }
 
 .sponsor-logo {
-  height: 48px;
+  max-height: 48px;
+  max-width: 100%;
   width: auto;
+  height: auto;
   margin-bottom: 0.6rem;
   border-radius: 6px;
   background: #fff;
@@ -241,7 +243,10 @@ section {
 }
 
 .sponsor-logo-transparent {
-  height: 84px;
+  max-height: 84px;
+  max-width: 100%;
+  width: auto;
+  height: auto;
   background: none;
   padding: 0;
   border-radius: 0;
