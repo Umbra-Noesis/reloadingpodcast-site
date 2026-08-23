@@ -241,6 +241,7 @@ section {
 }
 
 .sponsor-logo-transparent {
+  height: 84px;
   background: none;
   padding: 0;
   border-radius: 0;
