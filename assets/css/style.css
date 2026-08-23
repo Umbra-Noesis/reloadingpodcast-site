@@ -231,13 +231,19 @@ section {
 .card.accent-green { border-top: 3px solid var(--green-accent); }
 .card.accent-gold { border-top: 3px solid var(--gold); }
 
-.sponsor-featured .sponsor-logo {
+.sponsor-logo {
   height: 48px;
   width: auto;
   margin-bottom: 0.6rem;
   border-radius: 6px;
   background: #fff;
   padding: 0.3rem;
+}
+
+.sponsor-logo-transparent {
+  background: none;
+  padding: 0;
+  border-radius: 0;
 }
 
 /* Crisis resources gets its own full-width band, deliberately set apart
