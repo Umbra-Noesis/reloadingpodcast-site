@@ -134,8 +134,14 @@ nav.pill-nav a.active {
 }
 .hero-with-sidebar .hero-main { flex: 1 1 420px; }
 
-.side-widget {
+.sidebar-stack {
   flex: 0 0 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.side-widget {
   background: var(--bg-elevated);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -153,7 +159,6 @@ nav.pill-nav a.active {
   -webkit-text-fill-color: currentColor;
 }
 .side-widget h3:not(:first-child) { margin-top: 1.25rem; }
-.side-widget h3.partner-heading { margin-top: 2.75rem; }
 
 .share-icons { display: flex; gap: 0.5rem; }
 .share-icons .share-icon {
