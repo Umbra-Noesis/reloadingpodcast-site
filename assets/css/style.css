@@ -153,6 +153,7 @@ nav.pill-nav a.active {
   -webkit-text-fill-color: currentColor;
 }
 .side-widget h3:not(:first-child) { margin-top: 1.25rem; }
+.side-widget h3.partner-heading { margin-top: 2.75rem; }
 
 .share-icons { display: flex; gap: 0.5rem; }
 .share-icons .share-icon {
