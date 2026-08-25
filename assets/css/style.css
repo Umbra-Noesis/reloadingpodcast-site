@@ -86,6 +86,43 @@ h1, h2, h3, .chrome-text {
   text-shadow: 0 1px 0 rgba(0,0,0,0.35);
 }
 
+/* Live-stream banner — sits above the site header, links out to the
+   Tuesday-night Rumble stream. Red "Live" pill echoes the tag-loaddata
+   pill pattern but filled solid so it reads as an active/live marker
+   rather than a reference tag. */
+.live-banner {
+  background: linear-gradient(180deg, rgba(183,43,41,0.20) 0%, rgba(6,7,9,0.4) 100%);
+  border-bottom: 1px solid var(--border);
+}
+
+.live-banner-link {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 0.55rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  color: var(--text);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+}
+.live-banner-link:hover { color: var(--gold); }
+
+.tag-live {
+  display: inline-block;
+  padding: 0.22rem 0.65rem;
+  border-radius: 999px;
+  background: var(--red-accent);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  flex: 0 0 auto;
+}
+
 header.site-header {
   border-bottom: 1px solid var(--border);
   background:
