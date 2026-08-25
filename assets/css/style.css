@@ -285,14 +285,17 @@ section {
 .card h3 { font-size: 1.05rem; margin: 0 0 0.4rem; }
 .card p { color: var(--text-dim); font-size: 0.9rem; margin: 0; }
 
-.tool-widget-preview {
+.tool-card-preview {
   width: 100%;
   border-radius: 6px;
   border: 1px solid var(--border);
   margin-bottom: 0.6rem;
   display: block;
 }
-.side-widget .btn-block { margin-top: 0.8rem; }
+.tool-card p { margin-bottom: 0.8rem; }
+/* Real visual gap from the episode cards to its left so this doesn't read
+   as a 4th episode -- it's a different kind of thing, not more show notes. */
+.tool-card { margin-left: 3rem; }
 
 .card.accent-red { border-top: 3px solid var(--red-accent); }
 .card.accent-green { border-top: 3px solid var(--green-accent); }
