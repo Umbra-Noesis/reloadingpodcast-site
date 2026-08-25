@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Reloading Podcast — Load Data Ledger</title>
+<style>
+  @page { size: letter; margin: 0.4in 0.45in; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #111;
+    margin: 0;
+    font-size: 9.5pt;
+  }
+  .sheet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 3px solid #0c4a68;
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+  }
+  .sheet-header h1 {
+    font-size: 20pt;
+    margin: 0;
+    font-weight: 800;
+  }
+  .sheet-header h1 .fill {
+    display: inline-block;
+    min-width: 260px;
+    border-bottom: 1.5px solid #111;
+  }
+  .attribution {
+    text-align: right;
+    font-size: 8pt;
+    color: #444;
+    line-height: 1.4;
+  }
+  .attribution strong { color: #0c4a68; }
+
+  /* Session info header: fields that apply to the whole sheet */
+  .session-info {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    border: 1.5px solid #111;
+    margin-bottom: 10px;
+  }
+  .session-info div {
+    border-right: 1px solid #111;
+    border-bottom: 1px solid #111;
+    padding: 3px 5px;
+    font-size: 8pt;
+  }
+  .session-info div:nth-child(5n) { border-right: none; }
+  .session-info label {
+    display: block;
+    font-weight: 700;
+    font-size: 7.2pt;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #333;
+    margin-bottom: 9px;
+  }
+
+  /* Per-load entry box */
+  .entry {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.15fr;
+    border: 1.5px solid #111;
+    margin-bottom: 8px;
+    break-inside: avoid;
+  }
+  .entry-col {
+    border-right: 1px solid #111;
+  }
+  .entry-col:last-child { border-right: none; }
+  .field-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid #ccc;
+    padding: 2.5px 5px;
+  }
+  .field-row:last-child { border-bottom: none; }
+  .field-row .fname {
+    font-weight: 700;
+    white-space: nowrap;
+    margin-right: 6px;
+  }
+  .field-row .fline {
+    flex: 1;
+    border-bottom: 1px solid #999;
+    min-height: 11px;
+  }
+
+  .notes-col {
+    padding: 4px 5px;
+    display: flex;
+    flex-direction: column;
+  }
+  .notes-col .notes-label {
+    font-weight: 700;
+    font-size: 8pt;
+    margin-bottom: 2px;
+  }
+  .notes-col .notes-area {
+    flex: 1;
+    min-height: 46px;
+    border-bottom: 1px solid #999;
+  }
+  .pressure-signs {
+    display: flex;
+    gap: 14px;
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px solid #ccc;
+    font-size: 8pt;
+  }
+  .pressure-signs .ps-item { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+  .pressure-signs .yn { display: inline-flex; gap: 3px; }
+  .pressure-signs .yn span {
+    display: inline-block;
+    width: 13px; height: 13px;
+    border: 1px solid #111;
+    border-radius: 2px;
+    font-size: 6.5pt;
+    text-align: center;
+    line-height: 13px;
+  }
+
+  .page-footer {
+    text-align: center;
+    font-size: 7pt;
+    color: #888;
+    margin-top: 4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="sheet-header">
+  <h1>Cartridge: <span class="fill">&nbsp;</span></h1>
+  <div class="attribution"><strong>Reloading Podcast</strong> — Load Data Ledger<br>reloadingpodcast.com</div>
+</div>
+
+<div class="session-info">
+  <div><label>Range Name</label></div>
+  <div><label>Firearm Used</label></div>
+  <div><label>Barrel Length</label></div>
+  <div><label>Twist Rate</label></div>
+  <div><label>Chrono Type</label></div>
+  <div><label>Date</label></div>
+  <div><label>Time of Day</label></div>
+  <div><label>Temp</label></div>
+  <div><label>Humidity</label></div>
+  <div><label>Wind</label></div>
+</div>
+
+<!-- One .entry block per load. Repeat as needed; break-inside:avoid keeps each
+     box intact across a page break, and the browser will paginate naturally. -->
+<div id="entries"></div>
+
+<script>
+(function () {
+  var entryHTML =
+    '<div class="entry">' +
+      '<div class="entry-col">' +
+        fieldRow('Cartridge') +
+        fieldRow('Date Loaded') +
+        fieldRow('Load Data Source') +
+        fieldRow('Bullet Brand') +
+        fieldRow('Bullet Type') +
+        fieldRow('Bullet Weight (gr)') +
+        fieldRow('Case Brand / Headstamp') +
+        fieldRow('Scope Brand') +
+      '</div>' +
+      '<div class="entry-col">' +
+        fieldRow('Powder') +
+        fieldRow('Powder Weight (gr)') +
+        fieldRow('Primer Brand') +
+        fieldRow('Primer Type') +
+        fieldRow('COL') +
+        fieldRow('Avg Velocity (fps)') +
+        fieldRow('SD / ES (fps)') +
+        fieldRow('Group Size @ Distance') +
+      '</div>' +
+      '<div class="entry-col notes-col">' +
+        '<div class="notes-label">Notes / Observations:</div>' +
+        '<div class="notes-area"></div>' +
+        '<div class="pressure-signs">' +
+          '<div class="ps-item">Primer Flattened: <span class="yn"><span>Y</span><span>N</span></span></div>' +
+          '<div class="ps-item">Ejector Marks: <span class="yn"><span>Y</span><span>N</span></span></div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+  function fieldRow(name) {
+    return '<div class="field-row"><span class="fname">' + name + ':</span><span class="fline"></span></div>';
+  }
+
+  var count = 5; // 5 entries fits cleanly on one letter page; a 6th spills to page 2
+  var out = '';
+  for (var i = 0; i < count; i++) out += entryHTML;
+  document.getElementById('entries').innerHTML = out;
+})();
+</script>
+
+</body>
+</html>

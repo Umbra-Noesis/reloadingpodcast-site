@@ -285,6 +285,15 @@ section {
 .card h3 { font-size: 1.05rem; margin: 0 0 0.4rem; }
 .card p { color: var(--text-dim); font-size: 0.9rem; margin: 0; }
 
+.tool-card-preview {
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  margin-bottom: 0.6rem;
+  display: block;
+}
+.tool-card p { margin-bottom: 0.8rem; }
+
 .card.accent-red { border-top: 3px solid var(--red-accent); }
 .card.accent-green { border-top: 3px solid var(--green-accent); }
 .card.accent-gold { border-top: 3px solid var(--gold); }
