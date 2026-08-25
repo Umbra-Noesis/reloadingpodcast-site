@@ -141,6 +141,13 @@ nav.pill-nav a.active {
   gap: 2rem;
 }
 
+/* Recent Episodes lives inside the hero now, as a full-width row below
+   hero-main and the sidebar, so it sits right where those columns end
+   instead of after a separate section with its own top padding. */
+.hero-episodes {
+  flex-basis: 100%;
+}
+
 .side-widget {
   background: var(--bg-elevated);
   border: 1px solid var(--border);
