@@ -23,11 +23,11 @@
 
   --radius: 10px;
 
-  /* Content width: 1180px on anything up to ~1475px viewport (all phones,
-     tablets, most laptops — unchanged from before), scales toward 80% of
-     the viewport on wider desktop monitors, caps at 1600px so lines don't
-     stretch too thin on ultrawide screens. */
-  --content-width: clamp(1180px, 80vw, 1600px);
+  /* Content width: 1180px on anything up to ~1245px viewport (phones,
+     tablets, small laptops — unchanged from before), scales toward 95% of
+     the viewport above that, leaving just a thin margin either side. Caps
+     at 1900px so it doesn't stretch too thin on ultrawide monitors. */
+  --content-width: clamp(1180px, 95vw, 1900px);
 }
 
 * { box-sizing: border-box; }
