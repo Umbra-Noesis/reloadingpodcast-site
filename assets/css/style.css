@@ -199,10 +199,15 @@ nav.pill-nav a.active {
 }
 
 .btn-primary {
-  background: var(--blue);
+  background:
+    radial-gradient(120% 180% at 12% -30%, rgba(191,233,255,0.55) 0%, rgba(191,233,255,0) 32%),
+    radial-gradient(90% 140% at 90% 130%, rgba(47,168,222,0.5) 0%, rgba(47,168,222,0) 42%),
+    linear-gradient(135deg, #051622 0%, #0c4a68 20%, #14547a 32%, #051622 48%, #1791c7 64%, #08202f 80%, #0c4a68 100%);
+  border-color: rgba(191,233,255,0.28);
   color: #fff;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.7);
 }
-.btn-primary:hover { background: var(--blue-chrome-2); color: #fff; }
+.btn-primary:hover { filter: brightness(1.18); }
 
 .btn-accent-red {
   background: var(--red-accent);
