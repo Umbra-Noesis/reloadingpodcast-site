@@ -22,6 +22,12 @@
   --text-dim: #9aa4b2;
 
   --radius: 10px;
+
+  /* Content width: 1180px on anything up to ~1475px viewport (all phones,
+     tablets, most laptops — unchanged from before), scales toward 80% of
+     the viewport on wider desktop monitors, caps at 1600px so lines don't
+     stretch too thin on ultrawide screens. */
+  --content-width: clamp(1180px, 80vw, 1600px);
 }
 
 * { box-sizing: border-box; }
@@ -71,7 +77,7 @@ header.site-header {
 }
 
 .site-header-inner {
-  max-width: 1180px;
+  max-width: var(--content-width);
   margin: 0 auto;
   padding: 0.75rem 1.25rem;
   display: flex;
@@ -109,7 +115,7 @@ nav.pill-nav a.active {
 }
 
 .hero {
-  max-width: 1180px;
+  max-width: var(--content-width);
   margin: 0 auto;
   padding: 3.5rem 1.25rem 1rem;
 }
@@ -126,31 +132,29 @@ nav.pill-nav a.active {
 }
 
 /* Hero + sidebar layout, matching FRN's own episode-page share/support widget.
-   Grid, not flex: hero-main and hero-episodes stack in the left column
-   (column 1, rows 1-2) while sidebar-stack spans both rows on the right.
-   That keeps Recent Episodes tucked right under the button row regardless
-   of how tall the sidebar gets — flex's row-wrap would otherwise drop it
-   below whichever column (main or sidebar) is taller. */
+   hero-content wraps hero-main + hero-episodes so they stack independently
+   of the sidebar's height, then that whole block sits beside sidebar-stack
+   as a plain two-item row. This is deliberately NOT one flex/grid row split
+   three ways (hero-main, hero-episodes, sidebar-stack): both flex-wrap and
+   a spanning grid item let a tall sidebar dictate where hero-episodes
+   starts, dropping it below the sidebar and opening a gap under the
+   (shorter) button row. Two items only, no wrap, no span — the sidebar's
+   height can't leak into hero-content's layout at all. */
 .hero-with-sidebar {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 280px;
-  align-items: start;
+  display: flex;
+  align-items: flex-start;
   gap: 2rem;
+  flex-wrap: wrap;
 }
-.hero-with-sidebar .hero-main { grid-column: 1; grid-row: 1; }
-.hero-with-sidebar .hero-episodes { grid-column: 1; grid-row: 2; }
-.hero-with-sidebar .sidebar-stack { grid-column: 2; grid-row: 1 / -1; }
-
-@media (max-width: 700px) {
-  .hero-with-sidebar {
-    grid-template-columns: 1fr;
-  }
-  .hero-with-sidebar .hero-main,
-  .hero-with-sidebar .hero-episodes,
-  .hero-with-sidebar .sidebar-stack {
-    grid-column: 1;
-    grid-row: auto;
-  }
+.hero-with-sidebar .hero-content {
+  flex: 1 1 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  min-width: 0;
+}
+.hero-with-sidebar .sidebar-stack {
+  flex: 0 0 280px;
 }
 
 .sidebar-stack {
@@ -243,7 +247,7 @@ nav.pill-nav a.active {
 }
 
 section {
-  max-width: 1180px;
+  max-width: var(--content-width);
   margin: 0 auto;
   padding: 2.5rem 1.25rem;
 }
@@ -293,7 +297,7 @@ section {
    from the surrounding sections rather than folded into show notes —
    but aligned to the same content width as everything else, not full-bleed. */
 .crisis-resources {
-  max-width: 1180px;
+  max-width: var(--content-width);
   margin: 0 auto;
   padding: 0;
   background: rgba(183, 43, 41, 0.08);
@@ -301,7 +305,7 @@ section {
   border-radius: var(--radius);
 }
 .crisis-resources .section-inner {
-  max-width: 1180px;
+  max-width: var(--content-width);
   margin: 0 auto;
   padding: 2.5rem 1.25rem;
 }
