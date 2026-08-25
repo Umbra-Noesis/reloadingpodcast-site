@@ -46,20 +46,8 @@
     <div class="hero-episodes" id="episodes">
       <span class="eyebrow">Latest</span>
       <h2 class="chrome-text">Recent Episodes</h2>
-      <div class="card-grid">
-        <!-- display:contents so the JS-populated episode cards below land as
-             direct children of .card-grid, sharing the row with the tool
-             card that follows -- the fetch script only ever touches this
-             wrapper's innerHTML, so it can never wipe out the tool card. -->
-        <div id="recent-episodes" style="display:contents">
-          <div class="card"><h3>Loading episodes&hellip;</h3><p>Pulling the latest from the show feed.</p></div>
-        </div>
-        <div class="card tool-card">
-          <img src="assets/img/load-data-ledger-preview.jpg" alt="Load Data Ledger preview" class="tool-card-preview">
-          <h3>Load Data Ledger</h3>
-          <p>Printable range/load-testing sheet &mdash; cartridge, load, and condition data plus group size and pressure-sign tracking.</p>
-          <a href="assets/downloads/load-data-ledger.pdf" class="btn btn-primary btn-block" download>Download PDF</a>
-        </div>
+      <div class="card-grid" id="recent-episodes">
+        <div class="card"><h3>Loading episodes&hellip;</h3><p>Pulling the latest from the show feed.</p></div>
       </div>
       <p style="margin-top:1rem;"><a href="episodes.html" class="btn btn-primary">Browse All Episodes</a></p>
     </div>
@@ -99,6 +87,13 @@
       <p class="widget-links">
         <a href="https://civmedical.com/landing/?rl_partner_profile=rlp" target="_blank" rel="noopener">Civilian Medical</a> &mdash; tactical medical training for civilians.
       </p>
+    </aside>
+
+    <aside class="side-widget">
+      <h3>Load Data Ledger</h3>
+      <img src="assets/img/load-data-ledger-preview.jpg" alt="Load Data Ledger preview" class="tool-widget-preview">
+      <p class="widget-links">Printable range/load-testing sheet &mdash; cartridge, load, and condition data plus group size and pressure-sign tracking.</p>
+      <a href="assets/downloads/load-data-ledger.pdf" class="btn btn-primary btn-block" download>Download PDF</a>
     </aside>
   </div>
 </section>
