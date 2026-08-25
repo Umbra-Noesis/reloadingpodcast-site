@@ -58,6 +58,23 @@ a:hover { color: var(--gold); }
 .eyebrow a { color: inherit; }
 .eyebrow a:hover { text-decoration: underline; }
 
+/* Small badge for a card that links to a vendor's specific reloading-data
+   page rather than their general site/homepage — flags it as reference
+   material so it doesn't read as a redundant duplicate of that vendor's
+   other card elsewhere on the page. Sits above the logo inside the card. */
+.tag-loaddata {
+  display: inline-block;
+  padding: 0.25rem 0.7rem;
+  margin-bottom: 0.7rem;
+  border: 1px solid var(--gold);
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
 /* Chrome-blue heading treatment */
 h1, h2, h3, .chrome-text {
   font-weight: 800;
