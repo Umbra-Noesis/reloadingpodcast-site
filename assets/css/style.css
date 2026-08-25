@@ -293,10 +293,24 @@ section {
   display: block;
 }
 .tool-card p { margin-bottom: 0.8rem; }
-/* Pin to the last column track of the auto-fill grid, flush against the
-   sidebar edge, with whatever empty tracks fall between it and the last
-   episode card left genuinely blank -- not just nudged over with margin. */
-.tool-card { grid-column: -2 / -1; }
+
+/* Disclaimer+button-row on the left, the ledger card on the right, top-
+   aligned with each other -- puts the ledger card up at button-row height
+   instead of down in the Recent Episodes row (which just stretched the
+   episode cards to match its height -- see .hero-episodes .card-grid). */
+.hero-main-lower {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.hero-main-lower-left { flex: 1 1 420px; }
+.hero-main-lower .tool-card { flex: 0 0 260px; }
+
+/* Recent Episodes no longer shares its row with anything taller than an
+   episode card, but keep this explicit -- default grid stretch is what
+   caused the dead space under the episode cards in the first place. */
+.hero-episodes .card-grid { align-items: start; }
 
 .card.accent-red { border-top: 3px solid var(--red-accent); }
 .card.accent-green { border-top: 3px solid var(--green-accent); }
