@@ -40,6 +40,7 @@
       </div>
       <div class="btn-row">
         <a href="#episodes" class="btn btn-primary">Episodes</a>
+        <a href="#load-calculator" class="btn btn-primary">Load Increment Calculator</a>
         <a href="#crisis-resources" class="btn btn-primary">Crisis &amp; Support Resources</a>
         <a href="#sponsors" class="btn btn-primary">Sponsors &amp; Partners</a>
         <a href="#gear-links" class="btn btn-primary">Other Gear We Use</a>
@@ -140,6 +141,108 @@
     .catch(function () {
       grid.innerHTML = '<div class="card"><h3>Episodes unavailable</h3><p>Couldn&rsquo;t reach the show feed right now &mdash; try again shortly.</p></div>';
     });
+})();
+</script>
+
+<section id="load-calculator">
+  <span class="eyebrow">Reloading Tool</span>
+  <h2 class="chrome-text">Load Increment Calculator</h2>
+  <p class="lede">Set a minimum charge, a maximum charge, and how many steps you want &mdash; it builds an evenly spaced ladder for load development. Change any number and the whole table recalculates live, right here in the browser.</p>
+
+  <div class="calc-card">
+    <div class="calc-inputs">
+      <label>Minimum load (gr)
+        <input type="number" id="calc-min" value="37.7" step="0.01">
+      </label>
+      <label>Maximum load (gr)
+        <input type="number" id="calc-max" value="46.4" step="0.01">
+      </label>
+      <label>Number of steps (max 25)
+        <input type="number" id="calc-steps" value="25" min="1" max="25" step="1">
+      </label>
+      <div class="calc-increment">Increment<br><strong id="calc-increment-val">&mdash;</strong>&nbsp;gr</div>
+    </div>
+
+    <div class="calc-table-wrap">
+      <table class="calc-table">
+        <thead>
+          <tr><th>Step</th><th></th><th>Load, 0.1&nbsp;gr</th><th>Step, gr</th><th>Exact</th></tr>
+        </thead>
+        <tbody id="calc-table-body"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var minEl = document.getElementById('calc-min');
+  var maxEl = document.getElementById('calc-max');
+  var stepsEl = document.getElementById('calc-steps');
+  var incVal = document.getElementById('calc-increment-val');
+  var body = document.getElementById('calc-table-body');
+  var MAX_ROWS = 25;
+
+  // Round to n decimals, matching Google Sheets ROUND(). The Number.EPSILON
+  // nudge cancels binary floating-point noise from the chained subtraction
+  // below without being large enough to shift a genuine value — unlike a
+  // fixed 1e-9 nudge, which is the wrong order of magnitude once d=9 and
+  // corrupts exactly the min-load boundary check it's meant to protect.
+  function round(n, d) {
+    var f = Math.pow(10, d);
+    return Math.round((n + Number.EPSILON * Math.abs(n)) * f) / f;
+  }
+
+  function recalc() {
+    var min = parseFloat(minEl.value);
+    var max = parseFloat(maxEl.value);
+    var steps = parseInt(stepsEl.value, 10);
+
+    body.innerHTML = '';
+    if (!isFinite(min) || !isFinite(max) || !isFinite(steps)) {
+      incVal.textContent = '—';
+      return;
+    }
+    steps = Math.min(Math.max(steps, 1), MAX_ROWS);
+
+    var divisor = steps < 2 ? 2 : Math.trunc(steps - 1);
+    var increment = (max - min) / divisor;
+    incVal.textContent = round(increment, 5);
+
+    var prevExact = null;
+    var prevRounded = null;
+    for (var i = 1; i <= MAX_ROWS; i++) {
+      var exact;
+      if (i === 1) {
+        exact = max;
+      } else if (round(prevExact, 9) > min) {
+        exact = prevExact - increment;
+      } else {
+        break; // matches the sheet: once at/under minimum, no further rows
+      }
+
+      var rounded = round(exact, 1);
+      var label = i === 1 ? 'Max Load' : (rounded > min ? '' : 'Min Load');
+      var stepDelta = i === 1 ? '' : round(rounded - prevRounded, 4);
+
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' + i + '</td>' +
+        '<td class="calc-label">' + label + '</td>' +
+        '<td class="calc-load">' + rounded.toFixed(1) + '</td>' +
+        '<td>' + stepDelta + '</td>' +
+        '<td class="calc-exact">' + exact.toFixed(4) + '</td>';
+      body.appendChild(tr);
+
+      prevExact = exact;
+      prevRounded = rounded;
+    }
+  }
+
+  [minEl, maxEl, stepsEl].forEach(function (el) {
+    el.addEventListener('input', recalc);
+  });
+  recalc();
 })();
 </script>
 

@@ -419,6 +419,95 @@ section {
 }
 .disclaimer-box strong { color: var(--text); }
 
+/* Load Increment Calculator — rebuilt client-side from the "Public Ladder
+   Load Calculator" Google Sheet rather than embedded, so visitors can
+   adjust numbers without write access to the source sheet. Red load
+   cells echo that sheet's own conditional-formatting convention. */
+.calc-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+
+.calc-inputs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+.calc-inputs label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+.calc-inputs input {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 0.95rem;
+  padding: 0.45rem 0.6rem;
+  width: 9rem;
+}
+.calc-inputs input:focus {
+  outline: none;
+  border-color: var(--blue-chrome-2);
+}
+
+.calc-increment {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+.calc-increment strong {
+  display: block;
+  color: var(--gold);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.calc-table-wrap {
+  overflow-x: auto;
+}
+.calc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.calc-table th {
+  text-align: left;
+  color: var(--text-dim);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid var(--border);
+}
+.calc-table td {
+  padding: 0.35rem 0.6rem;
+  border-bottom: 1px solid var(--border);
+}
+.calc-table .calc-label {
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+}
+.calc-table .calc-load {
+  background: var(--red-accent);
+  color: #fff;
+  font-weight: 700;
+  border-radius: 4px;
+}
+.calc-table .calc-exact {
+  color: var(--text-dim);
+  font-size: 0.82rem;
+}
+
 .host-card {
   text-align: center;
 }
