@@ -125,27 +125,38 @@ nav.pill-nav a.active {
   font-size: 1.05rem;
 }
 
-/* Hero + sidebar layout, matching FRN's own episode-page share/support widget */
+/* Hero + sidebar layout, matching FRN's own episode-page share/support widget.
+   Grid, not flex: hero-main and hero-episodes stack in the left column
+   (column 1, rows 1-2) while sidebar-stack spans both rows on the right.
+   That keeps Recent Episodes tucked right under the button row regardless
+   of how tall the sidebar gets — flex's row-wrap would otherwise drop it
+   below whichever column (main or sidebar) is taller. */
 .hero-with-sidebar {
-  display: flex;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  align-items: start;
   gap: 2rem;
-  flex-wrap: wrap;
 }
-.hero-with-sidebar .hero-main { flex: 1 1 420px; }
+.hero-with-sidebar .hero-main { grid-column: 1; grid-row: 1; }
+.hero-with-sidebar .hero-episodes { grid-column: 1; grid-row: 2; }
+.hero-with-sidebar .sidebar-stack { grid-column: 2; grid-row: 1 / -1; }
+
+@media (max-width: 700px) {
+  .hero-with-sidebar {
+    grid-template-columns: 1fr;
+  }
+  .hero-with-sidebar .hero-main,
+  .hero-with-sidebar .hero-episodes,
+  .hero-with-sidebar .sidebar-stack {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
 
 .sidebar-stack {
-  flex: 0 0 280px;
   display: flex;
   flex-direction: column;
   gap: 2rem;
-}
-
-/* Recent Episodes lives inside the hero now, as a full-width row below
-   hero-main and the sidebar, so it sits right where those columns end
-   instead of after a separate section with its own top padding. */
-.hero-episodes {
-  flex-basis: 100%;
 }
 
 .side-widget {
