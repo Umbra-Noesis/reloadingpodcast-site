@@ -171,6 +171,8 @@
         <tbody id="calc-table-body"></tbody>
       </table>
     </div>
+
+    <button type="button" id="calc-download" class="btn btn-primary">Download Ladder (CSV)</button>
   </div>
 </section>
 
@@ -181,7 +183,10 @@
   var stepsEl = document.getElementById('calc-steps');
   var incVal = document.getElementById('calc-increment-val');
   var body = document.getElementById('calc-table-body');
+  var downloadBtn = document.getElementById('calc-download');
   var MAX_ROWS = 25;
+  var lastRows = [];
+  var lastParams = null;
 
   // Round to n decimals, matching Google Sheets ROUND(). The Number.EPSILON
   // nudge cancels binary floating-point noise from the chained subtraction
@@ -199,6 +204,8 @@
     var steps = parseInt(stepsEl.value, 10);
 
     body.innerHTML = '';
+    lastRows = [];
+    lastParams = null;
     if (!isFinite(min) || !isFinite(max) || !isFinite(steps)) {
       incVal.textContent = '—';
       return;
@@ -208,6 +215,7 @@
     var divisor = steps < 2 ? 2 : Math.trunc(steps - 1);
     var increment = (max - min) / divisor;
     incVal.textContent = round(increment, 5);
+    lastParams = { min: min, max: max, steps: steps, increment: increment };
 
     var prevExact = null;
     var prevRounded = null;
@@ -234,14 +242,52 @@
         '<td class="calc-exact">' + exact.toFixed(4) + '</td>';
       body.appendChild(tr);
 
+      lastRows.push({ step: i, label: label, rounded: rounded, stepDelta: stepDelta, exact: exact });
       prevExact = exact;
       prevRounded = rounded;
     }
   }
 
+  // Escape a value for a CSV field: wrap in quotes and double up any
+  // embedded quotes if it contains a comma, quote, or newline.
+  function csvField(v) {
+    var s = String(v);
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  }
+
+  function downloadCsv() {
+    if (!lastParams || !lastRows.length) return;
+
+    var lines = [];
+    lines.push(['Load Increment Calculator']);
+    lines.push(['Minimum load (gr)', lastParams.min]);
+    lines.push(['Maximum load (gr)', lastParams.max]);
+    lines.push(['Number of steps', lastParams.steps]);
+    lines.push(['Increment (gr)', round(lastParams.increment, 5)]);
+    lines.push([]);
+    lines.push(['Step', '', 'Load, 0.1 gr', 'Step, gr', 'Exact']);
+    lastRows.forEach(function (r) {
+      lines.push([r.step, r.label, r.rounded.toFixed(1), r.stepDelta, r.exact.toFixed(4)]);
+    });
+
+    var csv = lines.map(function (row) { return row.map(csvField).join(','); }).join('\r\n');
+    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob);
+    var filename = 'load-ladder_' + lastParams.min + '-' + lastParams.max + 'gr_' + lastParams.steps + 'steps.csv';
+
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
   [minEl, maxEl, stepsEl].forEach(function (el) {
     el.addEventListener('input', recalc);
   });
+  downloadBtn.addEventListener('click', downloadCsv);
   recalc();
 })();
 </script>

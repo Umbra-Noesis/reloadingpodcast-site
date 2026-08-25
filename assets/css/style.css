@@ -272,6 +272,10 @@ nav.pill-nav a.active {
   font-weight: 700;
   font-size: 0.9rem;
   border: 1px solid transparent;
+  /* Reset for when .btn lands on a real <button> (e.g. #calc-download)
+     instead of an <a> -- UA button styling otherwise leaks through. */
+  font-family: inherit;
+  appearance: none;
 }
 
 .btn-primary {
@@ -474,6 +478,12 @@ section {
 .calc-table-wrap {
   overflow-x: auto;
 }
+
+#calc-download {
+  margin-top: 1.1rem;
+  cursor: pointer;
+}
+
 .calc-table {
   width: 100%;
   border-collapse: collapse;
