@@ -434,6 +434,12 @@ section {
   padding: 1.25rem;
 }
 
+.calc-instructions {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  margin: 0 0 1rem;
+}
+
 .calc-inputs {
   display: flex;
   flex-wrap: wrap;

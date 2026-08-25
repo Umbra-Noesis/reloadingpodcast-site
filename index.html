@@ -150,15 +150,16 @@
   <p class="lede">Set a minimum charge, a maximum charge, and how many steps you want &mdash; it builds an evenly spaced ladder for load development. Change any number and the whole table recalculates live, right here in the browser.</p>
 
   <div class="calc-card">
+    <p class="calc-instructions">Plug in your own minimum, maximum, and step count below &mdash; the numbers shown are just a placeholder, not a suggested load.</p>
     <div class="calc-inputs">
       <label>Minimum load (gr)
-        <input type="number" id="calc-min" value="37.7" step="0.01">
+        <input type="number" id="calc-min" value="3" step="0.01">
       </label>
       <label>Maximum load (gr)
-        <input type="number" id="calc-max" value="46.4" step="0.01">
+        <input type="number" id="calc-max" value="5" step="0.01">
       </label>
       <label>Number of steps (max 25)
-        <input type="number" id="calc-steps" value="25" min="1" max="25" step="1">
+        <input type="number" id="calc-steps" value="5" min="1" max="25" step="1">
       </label>
       <div class="calc-increment">Increment<br><strong id="calc-increment-val">&mdash;</strong>&nbsp;gr</div>
     </div>
