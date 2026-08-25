@@ -293,9 +293,10 @@ section {
   display: block;
 }
 .tool-card p { margin-bottom: 0.8rem; }
-/* Real visual gap from the episode cards to its left so this doesn't read
-   as a 4th episode -- it's a different kind of thing, not more show notes. */
-.tool-card { margin-left: 3rem; }
+/* Pin to the last column track of the auto-fill grid, flush against the
+   sidebar edge, with whatever empty tracks fall between it and the last
+   episode card left genuinely blank -- not just nudged over with margin. */
+.tool-card { grid-column: -2 / -1; }
 
 .card.accent-red { border-top: 3px solid var(--red-accent); }
 .card.accent-green { border-top: 3px solid var(--green-accent); }
