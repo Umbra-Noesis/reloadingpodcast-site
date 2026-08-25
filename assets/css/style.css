@@ -294,13 +294,20 @@ section {
 }
 .tool-card p { margin-bottom: 0.8rem; }
 
-/* Own row below the full-width button block (not sharing width with it --
-   that pushed the buttons into an extra wrap row), left-aligned so it
-   lines up under the button block's own left edge. */
-.hero-main .tool-card {
-  width: 260px;
+/* Recent Episodes and the ledger card side by side, both starting right
+   under the button block instead of one stacked below the other.
+   align-items:flex-start (not stretch) so the shorter one doesn't get
+   forced to match the taller one's height -- same reasoning as
+   .hero-episodes .card-grid below. */
+.hero-episodes-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+  flex-wrap: wrap;
   margin-top: 1.5rem;
 }
+.hero-episodes-row .hero-episodes { flex: 1 1 420px; }
+.hero-episodes-row .tool-card { flex: 0 0 260px; }
 
 /* Recent Episodes no longer shares its row with anything taller than an
    episode card, but keep this explicit -- default grid stretch is what
