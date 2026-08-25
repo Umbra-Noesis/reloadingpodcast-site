@@ -285,12 +285,22 @@ section {
 .card h3 { font-size: 1.05rem; margin: 0 0 0.4rem; }
 .card p { color: var(--text-dim); font-size: 0.9rem; margin: 0; }
 
+.tool-card { position: relative; }
 .tool-card-preview {
   width: 100%;
   border-radius: 6px;
   border: 1px solid var(--border);
   margin-bottom: 0.6rem;
   display: block;
+  cursor: zoom-in;
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.tool-card-preview:hover {
+  transform: scale(1.8);
+  transform-origin: top left;
+  z-index: 20;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.65);
 }
 .tool-card p { margin-bottom: 0.8rem; }
 
