@@ -213,6 +213,12 @@ nav.pill-nav a.active {
   color: #fff;
 }
 
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
 section {
   max-width: 1180px;
   margin: 0 auto;
