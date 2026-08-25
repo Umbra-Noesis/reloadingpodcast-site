@@ -366,35 +366,7 @@ section {
   padding: 2.5rem 1.25rem;
 }
 .crisis-resources .card.accent-red p a { color: var(--blue-chrome-2); }
-
-/* Slow, calm auto-scroll of the crisis-resources cards — motion reserved
-   for this one section so it stays meaningful. Pauses on hover and on
-   keyboard focus so nobody's chasing a moving phone-number link, and
-   backs off entirely for anyone who's asked their OS for reduced motion. */
-.crisis-scroll {
-  overflow: hidden;
-  margin-top: 1rem;
-}
-.crisis-scroll-track {
-  display: flex;
-  gap: 1rem;
-  width: max-content;
-  animation: crisis-scroll 70s linear infinite;
-}
-.crisis-scroll-track .card {
-  flex: 0 0 280px;
-}
-.crisis-scroll-track:hover,
-.crisis-scroll-track:focus-within {
-  animation-play-state: paused;
-}
-@keyframes crisis-scroll {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .crisis-scroll-track { animation: none; }
-}
+.crisis-resources .card-grid { margin-top: 1rem; }
 
 /* Disclaimer box — hero, static, soft red outline (same "pay attention"
    language as crisis-resources, but no motion; this one's meant to be
