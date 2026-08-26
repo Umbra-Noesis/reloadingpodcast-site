@@ -71,6 +71,12 @@
     </div>
   </div>
 
+  <div class="visitor-counter" id="visitor-counter">
+    <span class="visitor-counter-label">Visitors</span>
+    <span>Today: <strong id="visits-today">&ndash;</strong></span>
+    <span>All time: <strong id="visits-alltime">&ndash;</strong></span>
+  </div>
+
   <div class="sidebar-stack">
     <aside class="side-widget" id="support">
       <h3>Keep Us Loaded</h3>
@@ -140,6 +146,21 @@
     })
     .catch(function () {
       grid.innerHTML = '<div class="card"><h3>Episodes unavailable</h3><p>Couldn&rsquo;t reach the show feed right now &mdash; try again shortly.</p></div>';
+    });
+})();
+</script>
+
+<script>
+(function () {
+  fetch('/api/visits')
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      document.getElementById('visits-today').textContent = data.today;
+      document.getElementById('visits-alltime').textContent = data.allTime;
+    })
+    .catch(function () {
+      // Leave the placeholder dashes in place -- not worth a visible error
+      // over a small stat box.
     });
 })();
 </script>
