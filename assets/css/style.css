@@ -224,7 +224,7 @@ nav.pill-nav a.active {
 .visitor-counter {
   display: none;
   position: absolute;
-  top: 0.7rem;
+  top: 4.15rem;
   right: calc(280px + 2rem + 0.5rem);
   width: 150px;
   flex-direction: column;
