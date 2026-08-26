@@ -1,64 +1,51 @@
-// Fetches the show's real RSS feed (hosted on FRN/WordPress/PowerPress) and
-// hands the site simplified JSON to render episode cards from. Runs
-// server-side as a Cloudflare Pages Function so the browser never has to
-// deal with cross-origin XML — it just calls /api/episodes on our own domain.
-const FEED_URL = "https://firearmsradio.net/category/podcasts/reloading-2/feed/";
+// Episode list, merged from two static, permanently-growing archives:
+//
+//  - assets/data/episodes-frn-archive.json: FRN stopped publishing new
+//    Reloading Podcast episodes after #597, and their own RSS feed only
+//    ever carried a capped number of recent items to begin with (see
+//    scripts/snapshot-frn-episodes.mjs). Frozen once, never refreshed.
+//  - assets/data/episodes-rumble-archive.json: everything #598+, kept
+//    current by a scheduled GitHub Actions job (.github/workflows/
+//    update-rumble-episodes.yml + scripts/snapshot-rumble-episodes.mjs)
+//    that runs on GitHub's infrastructure, not Cloudflare's.
+//
+// That external-job design isn't incidental: fetching Rumble live from
+// *inside* this Function doesn't work. Rumble's own Cloudflare
+// bot-protection challenges any request that originates from Cloudflare's
+// edge network (confirmed directly -- a 403 with `cf-mitigated: challenge`
+// and a "Just a moment..." JS challenge page), since that's a well-known
+// automation source. Hence reading a pre-fetched static file here instead
+// of scraping Rumble on every visitor request.
+//
+// Both archives only ever grow -- once an episode lands in one it stays
+// there permanently, even if Rumble's own page later stops showing it
+// (it will, eventually: Rumble's channel page only ever shows the current
+// page of videos, so an episode scrolls out of page 1 once ~25 newer ones
+// exist; the scheduled job merges instead of overwriting for exactly this
+// reason). Sort is by actual publish date, not parsed episode number: the
+// FRN feed has one item mistitled "Reloading Podcast 1546" despite being
+// published in mid-2025, over a year before the real #597.
 
-function decodeEntities(str) {
-  return str
-    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(code))
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#039;/g, "'")
-    .replace(/&nbsp;/g, " ");
-}
-
-function stripCdata(str) {
-  const m = str.match(/^<!\[CDATA\[([\s\S]*)\]\]>$/);
-  return m ? m[1] : str;
-}
-
-function getTag(block, tag) {
-  const m = block.match(new RegExp(`<${tag}>([\\s\\S]*?)<\\/${tag}>`));
-  if (!m) return "";
-  return decodeEntities(stripCdata(m[1]).trim());
-}
-
-function excerpt(description, maxLen = 220) {
-  // Strip any stray HTML, collapse whitespace, cut cleanly.
-  const text = description.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
-  if (text.length <= maxLen) return text;
-  return text.slice(0, maxLen).replace(/\s+\S*$/, "") + "…";
+async function loadArchive(context, path) {
+  const url = new URL(context.request.url);
+  const assetUrl = new URL(path, url.origin);
+  const res = await context.env.ASSETS.fetch(new Request(assetUrl));
+  if (!res.ok) return [];
+  return res.json();
 }
 
 export async function onRequestGet(context) {
   const url = new URL(context.request.url);
-  const limit = Math.min(parseInt(url.searchParams.get("limit") || "50", 10), 100);
+  const limit = Math.min(parseInt(url.searchParams.get("limit") || "50", 10), 300);
 
-  const res = await fetch(FEED_URL, { cf: { cacheTtl: 1800, cacheEverything: true } });
-  if (!res.ok) {
-    return new Response(JSON.stringify({ episodes: [], error: "feed unavailable" }), {
-      status: 502,
-      headers: { "content-type": "application/json" },
-    });
-  }
-  const xml = await res.text();
-  const itemBlocks = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)].map((m) => m[1]);
+  const [frnArchive, rumbleArchive] = await Promise.all([
+    loadArchive(context, "/assets/data/episodes-frn-archive.json"),
+    loadArchive(context, "/assets/data/episodes-rumble-archive.json"),
+  ]);
 
-  const episodes = itemBlocks.slice(0, limit).map((block) => {
-    const enclosureMatch = block.match(/<enclosure[^>]*url="([^"]+)"/);
-    const imageMatch = block.match(/<itunes:image[^>]*href="([^"]+)"/);
-    return {
-      title: getTag(block, "title"),
-      link: getTag(block, "link"),
-      pubDate: getTag(block, "pubDate"),
-      excerpt: excerpt(getTag(block, "description")),
-      audio: enclosureMatch ? enclosureMatch[1] : null,
-      image: imageMatch ? imageMatch[1] : null,
-    };
-  });
+  const episodes = [...rumbleArchive, ...frnArchive]
+    .sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate))
+    .slice(0, limit);
 
   return new Response(JSON.stringify({ episodes }), {
     headers: {

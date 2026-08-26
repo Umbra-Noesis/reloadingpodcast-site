@@ -50,12 +50,22 @@
       }
       grid.innerHTML = eps.map(function (ep) {
         var date = ep.pubDate ? new Date(ep.pubDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : '';
-        var audio = ep.audio ? '<audio controls preload="none" style="width:100%;margin-top:0.6rem;" src="' + ep.audio + '"></audio>' : '';
+        var excerpt = ep.excerpt ? '<p>' + ep.excerpt + '</p>' : '';
+        var media = '';
+        if (ep.audio) {
+          media = '<audio controls preload="none" style="width:100%;margin-top:0.6rem;" src="' + ep.audio + '"></audio>';
+        } else if (ep.source === 'rumble') {
+          // Rumble episodes are video, not a downloadable audio file --
+          // link out instead of trying to embed a player inline.
+          var mins = ep.duration ? Math.round(ep.duration / 60) : null;
+          media = '<p class="episode-watch"><a href="' + ep.link + '" target="_blank" rel="noopener">Watch on Rumble &#8599;</a>' +
+            (mins ? ' &middot; ' + mins + ' min' : '') + '</p>';
+        }
         return '<div class="card episode-card">' +
           '<h3><a href="' + ep.link + '" target="_blank" rel="noopener">' + ep.title + '</a></h3>' +
           '<p class="episode-date">' + date + '</p>' +
-          '<p>' + ep.excerpt + '</p>' +
-          audio +
+          excerpt +
+          media +
           '</div>';
       }).join('');
     })
