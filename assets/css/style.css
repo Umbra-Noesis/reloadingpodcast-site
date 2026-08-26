@@ -215,15 +215,17 @@ nav.pill-nav a.active {
 /* Small floating visitor counter. Absolutely positioned so it's lifted
    completely out of the hero-with-sidebar flex flow -- it can't shift
    hero-content, sidebar-stack, or anything else's spacing. Anchored to
-   the gap just left of the sidebar, near the top of the hero. Hidden
-   below 1300px: below that, --content-width has already started
-   shrinking (see the clamp() above) and the hero title can grow wide
-   enough to run under it. */
+   the gap just left of the sidebar, top offset lined up with the "Keep
+   Us Loaded" heading text (the sidebar's own padding pushes that text
+   down from the sidebar's outer edge, so the counter needs the same
+   nudge to read as level with it). Hidden below 1300px: below that,
+   --content-width has already started shrinking (see the clamp() above)
+   and the hero title can grow wide enough to run under it. */
 .visitor-counter {
   display: none;
   position: absolute;
-  top: 0;
-  right: calc(280px + 2rem);
+  top: 0.7rem;
+  right: calc(280px + 2rem + 0.5rem);
   width: 150px;
   flex-direction: column;
   gap: 0.15rem;
