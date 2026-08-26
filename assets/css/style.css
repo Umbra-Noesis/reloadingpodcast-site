@@ -579,3 +579,11 @@ footer.site-footer {
   color: var(--text-dim);
   font-size: 0.85rem;
 }
+footer.site-footer p { margin: 0; }
+footer.site-footer p + p { margin-top: 0.5rem; }
+
+.footer-credit {
+  font-size: 0.72rem;
+}
+.footer-credit a { color: var(--gold); }
+.footer-credit a:hover { color: var(--blue-chrome-2); }
