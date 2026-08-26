@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 // Scheduled updater for assets/data/episodes-rumble-archive.json -- run
-// daily by .github/workflows/update-rumble-episodes.yml on GitHub's own
-// infrastructure, not Cloudflare's. Rumble's bot-protection challenges any
-// fetch that originates from Cloudflare's network, so this can't run as a
-// Cloudflare Pages Function -- see functions/api/episodes.js for the full
-// story.
+// daily by a cron job on genesis (~/bin/update_rlp_episodes.sh), not as a
+// Cloudflare Pages Function or a GitHub Actions workflow. Both of those
+// were tried first and both get a 403 from Rumble's bot-protection --
+// Cloudflare's edge network and GitHub-hosted runners are both well-known
+// automation IP ranges. A personal machine's own connection isn't, which
+// is the whole reason this runs there instead. See functions/api/episodes.js
+// for the full story.
 //
 // Fetches Rumble's channel page 1 (always the newest ~25 videos -- new
 // episodes never need deeper pages), keeps only episodes past

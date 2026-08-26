@@ -5,17 +5,19 @@
 //    ever carried a capped number of recent items to begin with (see
 //    scripts/snapshot-frn-episodes.mjs). Frozen once, never refreshed.
 //  - assets/data/episodes-rumble-archive.json: everything #598+, kept
-//    current by a scheduled GitHub Actions job (.github/workflows/
-//    update-rumble-episodes.yml + scripts/snapshot-rumble-episodes.mjs)
-//    that runs on GitHub's infrastructure, not Cloudflare's.
+//    current by a daily cron job on genesis (~/bin/update_rlp_episodes.sh
+//    + scripts/snapshot-rumble-episodes.mjs), not by anything running here
+//    on Cloudflare.
 //
 // That external-job design isn't incidental: fetching Rumble live from
 // *inside* this Function doesn't work. Rumble's own Cloudflare
-// bot-protection challenges any request that originates from Cloudflare's
-// edge network (confirmed directly -- a 403 with `cf-mitigated: challenge`
-// and a "Just a moment..." JS challenge page), since that's a well-known
-// automation source. Hence reading a pre-fetched static file here instead
-// of scraping Rumble on every visitor request.
+// bot-protection challenges any request that originates from a well-known
+// automation IP range -- confirmed directly for both Cloudflare's own edge
+// network (403, `cf-mitigated: challenge`, a "Just a moment..." JS
+// challenge page) and GitHub Actions' hosted runners, which is why this
+// runs from a personal machine's own connection instead. Hence reading a
+// pre-fetched static file here rather than scraping Rumble on every
+// visitor request.
 //
 // Both archives only ever grow -- once an episode lands in one it stays
 // there permanently, even if Rumble's own page later stops showing it
