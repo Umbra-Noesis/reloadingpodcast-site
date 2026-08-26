@@ -36,6 +36,22 @@ async function loadFrnArchive(context) {
   return res.json();
 }
 
+async function debugRumbleFetch() {
+  const res = await fetch(RUMBLE_CHANNEL_URL, {
+    headers: { "User-Agent": "Mozilla/5.0" },
+    cf: { cacheTtl: 0 },
+  });
+  const body = await res.text();
+  return new Response(JSON.stringify({
+    status: res.status,
+    ok: res.ok,
+    headers: Object.fromEntries(res.headers.entries()),
+    bodyLength: body.length,
+    bodyStart: body.slice(0, 1500),
+    hasGridMarker: body.includes("rum-videos-grid"),
+  }, null, 2), { headers: { "content-type": "application/json" } });
+}
+
 async function loadNewRumbleEpisodes() {
   const res = await fetch(RUMBLE_CHANNEL_URL, {
     headers: { "User-Agent": "Mozilla/5.0" },
@@ -70,6 +86,7 @@ async function loadNewRumbleEpisodes() {
 
 export async function onRequestGet(context) {
   const url = new URL(context.request.url);
+  if (url.searchParams.has("debugRumble")) return debugRumbleFetch();
   const limit = Math.min(parseInt(url.searchParams.get("limit") || "50", 10), 300);
 
   const [archive, freshFromRumble] = await Promise.all([
