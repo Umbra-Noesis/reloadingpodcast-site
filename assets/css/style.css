@@ -195,6 +195,7 @@ nav.pill-nav a.active {
    (shorter) button row. Two items only, no wrap, no span — the sidebar's
    height can't leak into hero-content's layout at all. */
 .hero-with-sidebar {
+  position: relative;
   display: flex;
   align-items: flex-start;
   gap: 2rem;
@@ -209,6 +210,43 @@ nav.pill-nav a.active {
 }
 .hero-with-sidebar .sidebar-stack {
   flex: 0 0 280px;
+}
+
+/* Small floating visitor counter. Absolutely positioned so it's lifted
+   completely out of the hero-with-sidebar flex flow -- it can't shift
+   hero-content, sidebar-stack, or anything else's spacing. Anchored to
+   the gap just left of the sidebar, near the top of the hero. Hidden
+   below 1300px: below that, --content-width has already started
+   shrinking (see the clamp() above) and the hero title can grow wide
+   enough to run under it. */
+.visitor-counter {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: calc(280px + 2rem);
+  width: 150px;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.6rem 0.75rem;
+  background: rgba(20, 23, 28, 0.85);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+.visitor-counter-label {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.68rem;
+  color: var(--text);
+}
+.visitor-counter strong {
+  color: var(--blue-chrome-2);
+  font-weight: 700;
+}
+@media (min-width: 1300px) {
+  .visitor-counter { display: flex; }
 }
 
 .sidebar-stack {
