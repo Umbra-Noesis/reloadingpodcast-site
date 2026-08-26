@@ -147,7 +147,7 @@
 <section id="load-calculator">
   <span class="eyebrow">Reloading Tool</span>
   <h2 class="chrome-text">Load Increment Calculator</h2>
-  <p class="lede">Set a minimum charge, a maximum charge, and how many steps you want &mdash; it builds an evenly spaced ladder for load development. Change any number and the whole table recalculates live, right here in the browser.</p>
+  <p class="lede">Set a minimum charge, a maximum charge, and either the number of steps or the increment you want &mdash; it builds an evenly spaced ladder for load development. Change any number and the whole table recalculates live, right here in the browser.</p>
 
   <div class="calc-card">
     <p class="calc-instructions">Plug in your own minimum, maximum, and step count below &mdash; the numbers shown are just a placeholder, not a suggested load.</p>
@@ -161,8 +161,11 @@
       <label>Number of steps (max 25)
         <input type="number" id="calc-steps" value="5" min="1" max="25" step="1">
       </label>
-      <div class="calc-increment">Increment<br><strong id="calc-increment-val">&mdash;</strong>&nbsp;gr</div>
+      <label>Increment (gr)
+        <input type="number" id="calc-increment" value="0.5" step="0.001" min="0">
+      </label>
     </div>
+    <p class="calc-hint">Set steps and the increment adjusts to fit &mdash; or set an increment and the step count adjusts instead. Whichever you type into last drives the other.</p>
 
     <div class="calc-table-wrap">
       <table class="calc-table">
@@ -182,12 +185,15 @@
   var minEl = document.getElementById('calc-min');
   var maxEl = document.getElementById('calc-max');
   var stepsEl = document.getElementById('calc-steps');
-  var incVal = document.getElementById('calc-increment-val');
+  var incEl = document.getElementById('calc-increment');
   var body = document.getElementById('calc-table-body');
   var downloadBtn = document.getElementById('calc-download');
   var MAX_ROWS = 25;
   var lastRows = [];
   var lastParams = null;
+  // Whichever of steps/increment the visitor last typed into "drives" the
+  // table; the other one is derived and its field updated to match.
+  var driver = 'steps';
 
   // Round to n decimals, matching Google Sheets ROUND(). The Number.EPSILON
   // nudge cancels binary floating-point noise from the chained subtraction
@@ -202,21 +208,23 @@
   function recalc() {
     var min = parseFloat(minEl.value);
     var max = parseFloat(maxEl.value);
-    var steps = parseInt(stepsEl.value, 10);
 
     body.innerHTML = '';
     lastRows = [];
     lastParams = null;
-    if (!isFinite(min) || !isFinite(max) || !isFinite(steps)) {
-      incVal.textContent = '—';
-      return;
-    }
-    steps = Math.min(Math.max(steps, 1), MAX_ROWS);
 
-    var divisor = steps < 2 ? 2 : Math.trunc(steps - 1);
-    var increment = (max - min) / divisor;
-    incVal.textContent = round(increment, 5);
-    lastParams = { min: min, max: max, steps: steps, increment: increment };
+    var increment;
+    if (driver === 'increment') {
+      increment = parseFloat(incEl.value);
+      if (!isFinite(min) || !isFinite(max) || !isFinite(increment) || increment <= 0) return;
+    } else {
+      var steps = parseInt(stepsEl.value, 10);
+      if (!isFinite(min) || !isFinite(max) || !isFinite(steps)) return;
+      steps = Math.min(Math.max(steps, 1), MAX_ROWS);
+      var divisor = steps < 2 ? 2 : Math.trunc(steps - 1);
+      increment = (max - min) / divisor;
+      incEl.value = round(increment, 5);
+    }
 
     var prevExact = null;
     var prevRounded = null;
@@ -247,6 +255,9 @@
       prevExact = exact;
       prevRounded = rounded;
     }
+
+    if (driver === 'increment') stepsEl.value = lastRows.length;
+    lastParams = { min: min, max: max, steps: lastRows.length, increment: increment };
   }
 
   // Escape a value for a CSV field: wrap in quotes and double up any
@@ -285,9 +296,11 @@
     URL.revokeObjectURL(url);
   }
 
-  [minEl, maxEl, stepsEl].forEach(function (el) {
+  [minEl, maxEl].forEach(function (el) {
     el.addEventListener('input', recalc);
   });
+  stepsEl.addEventListener('input', function () { driver = 'steps'; recalc(); });
+  incEl.addEventListener('input', function () { driver = 'increment'; recalc(); });
   downloadBtn.addEventListener('click', downloadCsv);
   recalc();
 })();

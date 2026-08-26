@@ -469,16 +469,11 @@ section {
   border-color: var(--blue-chrome-2);
 }
 
-.calc-increment {
-  font-size: 0.8rem;
+.calc-hint {
   color: var(--text-dim);
-  font-weight: 600;
-}
-.calc-increment strong {
-  display: block;
-  color: var(--gold);
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: 0.78rem;
+  font-style: italic;
+  margin: 0 0 1.25rem;
 }
 
 .calc-table-wrap {
