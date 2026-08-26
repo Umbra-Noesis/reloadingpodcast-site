@@ -1,64 +1,88 @@
-// Fetches the show's real RSS feed (hosted on FRN/WordPress/PowerPress) and
-// hands the site simplified JSON to render episode cards from. Runs
-// server-side as a Cloudflare Pages Function so the browser never has to
-// deal with cross-origin XML — it just calls /api/episodes on our own domain.
-const FEED_URL = "https://firearmsradio.net/category/podcasts/reloading-2/feed/";
+// Episode list, merged from two sources:
+//
+//  - Episodes #1-FRN_ARCHIVE_MAX_EPISODE: served from the static snapshot at
+//    /assets/data/episodes-frn-archive.json. FRN (the show's original host)
+//    stopped publishing new Reloading Podcast episodes after #597, and their
+//    own RSS feed only ever carries a capped number of recent items anyway
+//    (see scripts/snapshot-frn-episodes.mjs for detail) -- so rather than
+//    depend on their feed staying up and unchanged forever, that range is
+//    frozen into our own permanent copy.
+//  - Episodes newer than that: scraped live from Rumble
+//    (rumble.com/user/ReloadingPodcast), which is where new episodes
+//    actually land now. Rumble doesn't publish an RSS/JSON feed, but its
+//    channel page embeds the same structured data its own front end uses to
+//    render the video grid, which we parse directly.
+//
+// Anything Rumble shows at or below FRN_ARCHIVE_MAX_EPISODE is deliberately
+// ignored -- the FRN snapshot already owns that range permanently, so this
+// can't develop a gap even if Rumble's own archive later starts trimming
+// its older pages (short of it someday trimming all the way past #597,
+// which would take trimming through the show's entire posting history since
+// this was written -- a problem for a future re-look, not this design).
 
-function decodeEntities(str) {
-  return str
-    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(code))
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#039;/g, "'")
-    .replace(/&nbsp;/g, " ");
+const FRN_ARCHIVE_MAX_EPISODE = 597;
+const RUMBLE_CHANNEL_URL = "https://rumble.com/user/ReloadingPodcast";
+
+function parseEpisodeNumber(title) {
+  const m = (title || "").match(/Reloading Podcast\s+(\d+)/i);
+  return m ? parseInt(m[1], 10) : null;
 }
 
-function stripCdata(str) {
-  const m = str.match(/^<!\[CDATA\[([\s\S]*)\]\]>$/);
-  return m ? m[1] : str;
+async function loadFrnArchive(context) {
+  const url = new URL(context.request.url);
+  const archiveUrl = new URL("/assets/data/episodes-frn-archive.json", url.origin);
+  const res = await context.env.ASSETS.fetch(new Request(archiveUrl));
+  if (!res.ok) return [];
+  return res.json();
 }
 
-function getTag(block, tag) {
-  const m = block.match(new RegExp(`<${tag}>([\\s\\S]*?)<\\/${tag}>`));
-  if (!m) return "";
-  return decodeEntities(stripCdata(m[1]).trim());
-}
+async function loadNewRumbleEpisodes() {
+  const res = await fetch(RUMBLE_CHANNEL_URL, {
+    headers: { "User-Agent": "Mozilla/5.0" },
+    cf: { cacheTtl: 1800, cacheEverything: true },
+  });
+  if (!res.ok) return [];
+  const html = await res.text();
+  const m = html.match(/<rum-videos-grid>\s*<script type="application\/json">([\s\S]*?)<\/script>/);
+  if (!m) return [];
 
-function excerpt(description, maxLen = 220) {
-  // Strip any stray HTML, collapse whitespace, cut cleanly.
-  const text = description.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
-  if (text.length <= maxLen) return text;
-  return text.slice(0, maxLen).replace(/\s+\S*$/, "") + "…";
+  let data;
+  try {
+    data = JSON.parse(m[1]);
+  } catch {
+    return [];
+  }
+
+  return (data.items || [])
+    .map((it) => ({
+      episodeNumber: parseEpisodeNumber(it.title),
+      title: it.title,
+      link: it.url,
+      pubDate: it.upload_date,
+      image: it.thumb,
+      duration: it.duration,
+      source: "rumble",
+    }))
+    // Page 1 is always the newest 25 videos, so it's all we need to find
+    // anything past the frozen FRN ceiling -- no pagination required.
+    .filter((ep) => ep.episodeNumber !== null && ep.episodeNumber > FRN_ARCHIVE_MAX_EPISODE);
 }
 
 export async function onRequestGet(context) {
   const url = new URL(context.request.url);
-  const limit = Math.min(parseInt(url.searchParams.get("limit") || "50", 10), 100);
+  const limit = Math.min(parseInt(url.searchParams.get("limit") || "50", 10), 300);
 
-  const res = await fetch(FEED_URL, { cf: { cacheTtl: 1800, cacheEverything: true } });
-  if (!res.ok) {
-    return new Response(JSON.stringify({ episodes: [], error: "feed unavailable" }), {
-      status: 502,
-      headers: { "content-type": "application/json" },
-    });
-  }
-  const xml = await res.text();
-  const itemBlocks = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)].map((m) => m[1]);
+  const [archive, freshFromRumble] = await Promise.all([
+    loadFrnArchive(context),
+    loadNewRumbleEpisodes().catch(() => []),
+  ]);
 
-  const episodes = itemBlocks.slice(0, limit).map((block) => {
-    const enclosureMatch = block.match(/<enclosure[^>]*url="([^"]+)"/);
-    const imageMatch = block.match(/<itunes:image[^>]*href="([^"]+)"/);
-    return {
-      title: getTag(block, "title"),
-      link: getTag(block, "link"),
-      pubDate: getTag(block, "pubDate"),
-      excerpt: excerpt(getTag(block, "description")),
-      audio: enclosureMatch ? enclosureMatch[1] : null,
-      image: imageMatch ? imageMatch[1] : null,
-    };
-  });
+  const episodes = [...freshFromRumble, ...archive]
+    // Publish date, not episode number -- FRN's own numbering has at least
+    // one bad entry (an episode titled "1546" published in mid-2025, over a
+    // year before the real #597), so number isn't a safe sort key.
+    .sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate))
+    .slice(0, limit);
 
   return new Response(JSON.stringify({ episodes }), {
     headers: {

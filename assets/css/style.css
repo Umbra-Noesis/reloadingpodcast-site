@@ -366,6 +366,10 @@ section {
 .card h3 { font-size: 1.05rem; margin: 0 0 0.4rem; }
 .card p { color: var(--text-dim); font-size: 0.9rem; margin: 0; }
 
+.episode-card p + p { margin-top: 0.5rem; }
+.episode-watch a { color: var(--gold); font-weight: 600; }
+.episode-watch a:hover { color: var(--blue-chrome-2); }
+
 .tool-card { position: relative; }
 .tool-card-preview {
   width: 100%;
